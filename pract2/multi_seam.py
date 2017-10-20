@@ -2,7 +2,7 @@
 
 # COMPLETAR PARA LA ENTREGA DE ESTA PRÁCTICA:
 # Fecha:
-# Alumno(s): Jose R. Prieto Fontcuberta
+# Alumno(s):
 
 from PIL import Image, ImageTk
 import tkinter
@@ -12,7 +12,7 @@ import sys
 import time
 import math
 
-def compute_gradient(grad,img,path):
+def compute_gradient(grad,img):
     """
     img  is a 2-dimensional grayscale image in a list of list format
     grad is the output represented in the same way
@@ -22,49 +22,99 @@ def compute_gradient(grad,img,path):
     """
     width, height = len(grad[0]), len(grad)
 
-    # MODIFY this function in order make it possible the incremental
-    # computation of the gradient
+    # do not modify this function in this template
 
     # first and last rows compute a different, simpler, gradient
     for y in (0, height-1): # just first and last rows
         for x in range(1, width-1): # first and last columns are excluded
             grad[y][x] = abs(img[y][x-1] - img[y][x+1])
-    if path is not None:
-        for y in range(1,height-1): # gradient for the rest of rows is based on Sobel operator
-            #for x in range(1, width-1): # first and last columns are excluded
-            for x in range(path[y]-1, min(path[y]+2,width-1)): # first and last columns are excluded
-                gx = -img[y-1][x-1]-2*img[y][x-1]-img[y+1][x-1]+img[y-1][x+1]+2*img[y][x+1]+img[y+1][x+1]
-                gy =  img[y-1][x-1]+2*img[y-1][x]+img[y-1][x+1]-img[y+1][x-1]-2*img[y+1][x]-img[y+1][x+1]
-                grad[y][x] = math.sqrt(gx*gx+gy*gy)
-    else:
-        for y in range(1, height - 1):  # gradient for the rest of rows is based on Sobel operator
-            for x in range(1, width-1): # first and last columns are excluded
-                gx = -img[y - 1][x - 1] - 2 * img[y][x - 1] - img[y + 1][x - 1] + img[y - 1][x + 1] + 2 * img[y][x + 1] + \
-                     img[y + 1][x + 1]
-                gy = img[y - 1][x - 1] + 2 * img[y - 1][x] + img[y - 1][x + 1] - img[y + 1][x - 1] - 2 * img[y + 1][x] - \
-                     img[y + 1][x + 1]
-                grad[y][x] = math.sqrt(gx * gx + gy * gy)
 
-def paint_seam(height,seam_path,color_matrix,path_color=[0,0,0]):
+    for y in range(1,height-1): # gradient for the rest of rows is based on Sobel operator
+        for x in range(1, width-1): # first and last columns are excluded
+            gx = -img[y-1][x-1]-2*img[y][x-1]-img[y+1][x-1]+img[y-1][x+1]+2*img[y][x+1]+img[y+1][x+1]
+            gy =  img[y-1][x-1]+2*img[y-1][x]+img[y-1][x+1]-img[y+1][x-1]-2*img[y+1][x]-img[y+1][x+1]
+            grad[y][x] = math.sqrt(gx*gx+gy*gy)
+
+def paint_seams(height,seam_paths,color_matrix,path_color=[0,0,0]):
     """
     You don't need to modify this function
     """
     for y in range(height):
-        color_matrix[y][seam_path[y]] = path_color
+        for path in seam_paths:
+            color_matrix[y][path[y]] = path_color
 
-def remove_seam(height,seam_path,color_matrix):
-    """
-    You don't need to modify this function
-    """
-    for y in range(height):
-        color_matrix[y].pop(seam_path[y])
 
-def dp_seam_carving(grad,mat):
-    """
-    dynamic programming version which finds just one path/seam and
-    returns it
+def merge_two_dicts(x, y):
+    z = x.copy()   # start with x's keys and values
+    z.update(y)    # modifies z with y's keys and values & returns None
+    return z
 
-    first and last columns are never considered in this algorithm
+"""PIENSALO ALREVES, EN LUGAR DE IR POR PATH, VE POR HEIGHT!"""
+def remove_seams(height,seam_paths, matrix):
+    """anyadimos la tupla que vayamos a borrar a un set
+        y luego cuando borremos los siguientes vigilamos si esa tupla ya ha sido 
+    """
+    print("preremove seam %d %d " % (len(matrix), len(matrix[0])))
+    usados = dict()
+    paths_validos = []
+    i = 0
+    for path in seam_paths:
+
+        # a = input("path > ")
+        #comprobamos primero que el camino es valido!
+        path_valido = True
+        aux = dict()
+        for (pos,num) in enumerate(path):
+            tupla = (pos, num)
+            usado = usados.get(tupla, False)
+            if usado:
+                path_valido = False
+                break;
+            # usados[tupla] = True
+            aux[tupla] = True
+        if path_valido:  #si encontramos un camino que choca con otro, pasamos al siguiente
+            print(i)
+            i = i + 1
+            # for y in range(height):
+            #     matrix[y].pop(path[y])
+            paths_validos.append(path)
+            usados = merge_two_dicts(usados, aux)
+
+    for path in paths_validos:
+        for (pos,i) in enumerate(path):
+            matrix[pos].pop(i)
+        break;
+    #ahora guardaremos aqui los pixels a borrar pero por filas
+
+    # new_paths = []
+    # for p in range(height):
+    #     new_paths.append([])
+    #
+    # #giramos
+    # for path in paths_validos:
+    #     for pos,p in enumerate(path):
+    #         new_paths[pos].append(p)
+    # print("Len %d "% len(paths_validos))
+    # for i in range(height):
+    #     path_row = new_paths[i]
+    #     path_row.sort()
+    #     for j in reversed(path_row):
+    #         matrix[i].pop(j)
+
+
+    print("removing seam %d %d " % (len(matrix), len(matrix[0])))
+    # a = input(">>>>>>>> ")
+
+def dp_seam_carving_multi(grad,mat,N,pscore=0.8):
+    """
+    dynamic programming version which finds many paths/seams and
+    returns them as a list of paths
+
+    N is the maximum number of seams to be returned, the actual number
+    of returned paths might be lower if they are not found.
+
+    A path is discarded if it has a pixel in common with a previous path
+    or if its total score multiplied by pscore is not <= best_score
     """
     width, height = len(grad[0]), len(grad)
     infty=1e99
@@ -84,28 +134,40 @@ def dp_seam_carving(grad,mat):
 
     # min_val, min_point = COMPLETE
     # retrieve the best path from min_point
-    path = [mat[height-1].index( min(mat[height-1]) )] # aqui tenemos el mas pequenyo
-    for y in reversed(range(0, height-1)):
-        ult_el = path[-1]
-        aux = [mat[y][ult_el -1], mat[y][ult_el], mat[y][ult_el +1]]
-        pos_minimo = aux.index(min(aux)) - 1 # Nos indica quien de sus superiores es minimo, si el -1 / 0 o +1
+    aux = list(mat[height-1])
+    min_scores = [] #el orden de las semillas que iremos cogiendo
+    for i in list(range(min(N, width))):
+        p = aux.index(min(aux))
+        aux[p] = infty
+        min_scores.append(p)
 
-        #pos_minimo se le sumara para decidir la posicion que anyadir
-        path.append(ult_el+pos_minimo)
-    # COMPLETE HERE
-    path.reverse()
+    #path = [mat[height-1].index( min(mat[height-1]) )] # aqui tenemos el mas pequenyo
+    paths = [] # aqui tendremos una lista de paths (lista de listas)
+    bscore = mat[height-1].index( min(mat[height-1]) ) #el mejor score es mas pequenyo
+    score = bscore
 
+    #condicion de parada
+    while (score*pscore <= bscore and len(paths) < min(N, width)):
 
+        #se va a nyadir un camino a path y quitar una semilla en min_scores cada iteracion
+        path = [min_scores[0]]
+        min_scores.pop(0)
 
-    # THIS CODE SHOULD BE REMOVED TO FINISH THE EXERCISE:
-    # x = random.randint(0,width-1)
-    # path = []
-    # for y in range(height):
-    #   delta = random.randint(-1 if x > 0 else 0, 1 if x <width-1 else 0)
-    #   x = x + delta
-    #   path.append(x)
-    # END OF CODE TO BE REMOVED
-    return path
+        #cogemos un camino
+        for y in reversed(range(0, height-1)):
+            ult_el = path[-1]
+            aux = [mat[y][ult_el -1], mat[y][ult_el], mat[y][ult_el +1]]
+            pos_minimo = aux.index(min(aux)) - 1 # Nos indica quien de sus superiores es minimo, si el -1 / 0 o +1
+
+            #pos_minimo se le sumara para decidir la posicion que anyadir
+            path.append(ult_el+pos_minimo)
+        path.reverse()
+        paths.append(path)
+
+    # a = input("efewwef ")
+    # paths.reverse()
+    #print(paths)
+    return paths
 
 def matrix_to_color_image(color_matrix):
     """
@@ -130,12 +192,14 @@ class MyTkApp():
     """
     def __init__(self,
                color_img,
-               removed_colums):
+               removed_colums,
+               max_number_seams):
 
         self.root=tkinter.Tk()
         self.root.title("Seam Carving")
         self.color_img = color_img
         self.removed_colums = removed_colums
+        self.max_number_seams = max_number_seams
         width, height = color_img.size
         height = min(720, height)
         self.root.geometry('%dx%d' % (width, height+64))
@@ -189,23 +253,24 @@ class MyTkApp():
       dp_matrix = [[infty for x in range(width)] for y in range(height)]
       
       self.showImg(color_img) # show image
-      seam_path = None # is None only in the very first iteration
-      for iteration in range(removed_colums):
+      while self.removed_colums>0:
         # compute the gradient
-        compute_gradient(gradient_matrix,grayscale_matrix,seam_path)
-        # call the DP algorithm, updating the seam_path:
-        seam_path = dp_seam_carving(gradient_matrix,dp_matrix)
-        paint_seam(height,seam_path,color_matrix)
+        compute_gradient(gradient_matrix,grayscale_matrix)
+        # call the DP algorithm:
+        N = min(self.removed_colums,self.max_number_seams)
+        seam_paths = dp_seam_carving_multi(gradient_matrix,dp_matrix,N)
+        paint_seams(height,seam_paths,color_matrix)
         # paint and show the seam
         self.showImg(matrix_to_color_image(color_matrix))
         # remove the seam path from the color matrix:
-        remove_seam(height,seam_path,color_matrix)
+        remove_seams(height,seam_paths,color_matrix)
         # remove from the grayscale_matrix
-        remove_seam(height,seam_path,grayscale_matrix)
+        remove_seams(height,seam_paths,grayscale_matrix)
         # remove from the gradient matrix
-        remove_seam(height,seam_path,gradient_matrix)
+        remove_seams(height,seam_paths,gradient_matrix)
         # decrement width
-        width -= 1
+        width -= len(seam_paths)
+        self.removed_colums -= len(seam_paths)
         # paint and show the seam
         self.showImg(matrix_to_color_image(color_matrix))
 
@@ -223,13 +288,14 @@ if __name__ == "__main__":
     """
     You don't need to modify the main function
     """
-    if len(sys.argv) != 3:
-        print('\n%s image_file {num_column|%%}\n'\
+    if len(sys.argv) != 4:
+        print('\n%s image_file {num_column|%%} number_seams\n'\
               % (sys.argv[0],))
         sys.exit()
         
     file_name = sys.argv[1]
-    ncolumns  = sys.argv[2]
+    ncolumns = sys.argv[2]
+    N = int(sys.argv[3])
 
     # open image
     color_img = Image.open(file_name)
@@ -249,4 +315,6 @@ if __name__ == "__main__":
 
     # tkinter
     app = MyTkApp(color_img,
-                  removed_colums)
+                  removed_colums,
+                  N)
+
