@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # COMPLETAR PARA LA ENTREGA DE ESTA PRÁCTICA:
-# Fecha:
-# Alumno(s): Jose R. Prieto Fontcuberta
+# Fecha: 24/10/2017
+# Alumno(s): Jose Ramon Prieto Fontcuberta
 
 from PIL import Image, ImageTk
 import tkinter
