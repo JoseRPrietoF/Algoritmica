@@ -119,14 +119,39 @@ def backtracking(formula, res = []):
 
     return None
 
+# COMPLETAR
+def unit_propagation(clauses = []):
+    asignados = []
+    vuelta = True
+    while vuelta:
+        vuelta = False
+        L = None
+        for c in clauses:
+            if len(c) > 1: continue;
+            #es unitaria
+            L = c[0]
+            vuelta = True
+            asignados.append(L)
+            break;
 
-def unit_propagation(clauses):
-    # COMPLETAR
-    pass
+        #Tenemos un unitario
+        if vuelta: #vamos a eliminar clausulas con L, y a eliminar -L del resto
+            clauses = [x for x in clauses if x != [L]] #eliminamos [L] de todos lados
 
+            for (pos, c) in enumerate(clauses): #eliminamos -L de todas las clausulas
+                clauses[pos] = [x for x in clauses[pos] if x != -L]
 
-def pure_literal_elimination(clauses):
-    # COMPLETAR
+        if [] in clauses:
+            return False, []
+
+        if len(clauses) == 0:
+            return True, asignados
+
+    return clauses, asignados
+
+# COMPLETAR
+def pure_literal_elimination(clauses = []):
+
     pass
 
 
