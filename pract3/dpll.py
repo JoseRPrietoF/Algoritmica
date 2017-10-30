@@ -151,12 +151,37 @@ def unit_propagation(clauses = []):
 
 # COMPLETAR
 def pure_literal_elimination(clauses = []):
+    positivos = list(set([x for c in clauses for x in c if x > 0]))
+    negativos = list(set([x for c in clauses for x in c if x < 0]))
+    #XOR function
+    puros = []
+    for p in positivos:
+        if -p not in negativos: #si no esta su negativo
+            puros.append(p)
+    for n in negativos:
+        if -n not in positivos: #si no esta su positivo
+            puros.append(n)
 
-    pass
+    res = []
+    #eliminar las cláusulas que tengan algún literal puro
+    for c in clauses:
+        hay_puro = False
+        for p in puros:
+            if p in c:
+                hay_puro = True
+                break;
+        #anyadimos a res solo si no hay puro, asi eliminamos los puros
+        if not hay_puro:
+            res.append(c)
 
+    if len(res) == 0:
+        return True, puros
 
+    return res, puros
+
+# COMPLETAR
 def dpll(formula):
-    # COMPLETAR
+
     pass
 
 

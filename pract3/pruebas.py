@@ -1,6 +1,5 @@
 import dpll
 
-print(dpll.simplify([[1,-3],[2,3,-1]],1))
-print(dpll.simplify([[1,-3],[-1]],1))
-print(dpll.simplify([[-1,-3],[2,3,-1]],1))
-print(dpll.simplify([[1,-3],[2,3,1]],1))
+c = [[1], [1, 2, 3], [-5, -4, 6], [5,7,-8]]
+print(dpll.pure_literal_elimination(c))
+
