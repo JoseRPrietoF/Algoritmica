@@ -180,9 +180,32 @@ def pure_literal_elimination(clauses = []):
     return res, puros
 
 # COMPLETAR
-def dpll(formula):
+def dpll(formula, res = []):
+    unit_propagation(formula)
+    pure_literal_elimination(formula)
 
-    pass
+    literal = choose_literal(formula)
+
+    for choice in (literal, -literal):
+        f = simplify(formula, choice)
+
+        if f is not False:
+
+            if f is True:
+                print("Acabo con %d " % choice)
+                return choice
+
+            resul = dpll(f)
+
+            if resul:
+                if type(resul) == int:
+                    res.append(resul)
+                res.append(choice)
+                print("devuelvo %s " % res)
+                return res
+
+    return None
+
 
 
 ######################################################################
@@ -197,8 +220,8 @@ if __name__ == "__main__":
     num_variables, clauses = read_cnf_dimacs(file_name)
     print(clauses)
     # replace backtracking by dpll when checking dpll
-    # resul = dpll(clauses)
-    resul = backtracking(clauses)
+    resul = dpll(clauses)
+    # resul = backtracking(clauses)
     if resul != None:
         print("We have found a solution:", resul)
         print("The check returns:", check(clauses, resul))
