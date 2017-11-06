@@ -1,0 +1,47 @@
+Programación dinámica
+
+    El problema del Río Congo
+    El trayecto más barato
+    El trayecto más probable
+    Mochila discreta (o sin fraccionamiento)
+    Camino más corto en un grafo acíclico
+    El camino más corto formado por k aristas
+    Camino más corto en un grafo sin ciclos negativos (Bellman-Ford)
+
+    Desglose óptimo de una cantidad de dinero:
+    Versión espacio de búsqueda con número de monedas de cada tipo
+    Versión espacio de búsqueda como secuencia de valores de monedas
+    Versión con limitación del número de monedas
+    Asignación óptima de recursos
+
+    Distancia de edición entre cadenas de caracteres (Levenshtein)
+
+    Subsecuencia común más larga (LCS)
+
+
+
+Backtracking
+Problemas de los apuntes:
+
+    n-reinas
+    suma de subconjuntos
+    ciclo Hamiltoniano
+
+Se ha explicado también:
+
+    esquema básico que busca todas las soluciones
+    esquema básico que para al encontrar una solución
+    generar las permutaciones de N elementos
+    combinaciones de M elementos tomados de N en N
+Se han sugerido como ejercicios para practicar/estudiar:
+
+
+
+
+
+
+No va:
+
+esquema backtracking no recursivo usando una pila/stack
+utilizar clases python en el esquema
+utilizar yield

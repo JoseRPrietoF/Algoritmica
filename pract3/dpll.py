@@ -192,7 +192,6 @@ def dpll(formula, res = []):
         if f is not False:
 
             if f is True:
-                print("Acabo con %d " % choice)
                 return choice
 
             resul = dpll(f)
@@ -201,7 +200,6 @@ def dpll(formula, res = []):
                 if type(resul) == int:
                     res.append(resul)
                 res.append(choice)
-                print("devuelvo %s " % res)
                 return res
 
     return None

@@ -68,7 +68,7 @@ def mochila_desplegada_con_camino(W,v,w):
 
     path.reverse()
 
-    return V[W-1,len(v)],V,path
+    return V[len(v)-1,W],V,path
 
 def dibujar_matriz_V_mochila(V):
     for i in range(len(v)):
@@ -76,6 +76,24 @@ def dibujar_matriz_V_mochila(V):
             print(V[i,c],end='\t', flush=True)
         print()
     print("FIN")
+
+
+
+def mochila2(W,v,w):
+    V = {}
+    for wi in range(W+1):
+        V[0, wi] = 0
+    for n in range(len(v)+1):
+        V[n,0] = 0
+
+    for i in range(1,len(v)):
+        for c in range(1, w[i]):
+            V[i,c] = V[i-1,c]
+        for c in range(w[i],W+1):
+            V[i,c] = max(V[i-1,c], V[i-1, c - w[i]] + v[i])
+    dibujar_matriz_V_mochila(V)
+    return V[len(v)-1, W]
+
 
 if __name__ == "__main__":
     # v = [0,3,4,5,6]
@@ -86,11 +104,17 @@ if __name__ == "__main__":
     W = 6
     # m,V = mochila(W,v,w)
     # m,V = mochila_desplegada(W,v,w)
-    print("V ", v)
-    print("w ", w)
-    print("W ", W)
-    m,V,path = mochila_desplegada_con_camino(W,v,w)
+    # print("V ", v)
+    # print("w ", w)
+    # print("W ", W)
+    # m,V,path = mochila_desplegada_con_camino(W,v,w)
+    #
+    # print(m)
+    # print(path)
 
-    print(m)
 
+    # print(mochila2(W,v,w))
+    _,_,path = mochila_desplegada_con_camino(W,v,w)
     print(path)
+    M = {}
+    {M}
