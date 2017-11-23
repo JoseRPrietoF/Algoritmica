@@ -7,8 +7,17 @@ def create_graph(N,maxvalue=1000):
   return G
 
 def process_graph(G):
-  # EJERCICIO 2
-  pass
+  if type(G) == np.ndarray:
+    N = G.shape[0]
+  else:
+    N = len(G)
+
+  for i in range(N):
+    for j in range(i, N):
+      min_value = min(G[i][j], G[j][i])
+      G[i][j] -= min_value
+      G[j][i] -= min_value
+  return G
 
 def generate_random_ordering(G):
   # let's assume that G is a square Numpy matrix of integers
@@ -17,11 +26,12 @@ def generate_random_ordering(G):
 
 def generate_greedy_ordering(G):
   # let's assume that G is a square Numpy matrix of integers
-  print(type(G))
+  # print(type(G))
   if type(G) == np.ndarray:
     N = G.shape[0]
   else:
     N = len(G)
+  process_graph(G)
   # EJERCICIO 1
   # REEMPLAZAR:
   res = []
